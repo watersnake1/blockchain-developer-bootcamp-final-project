@@ -34,6 +34,7 @@ const disconnectWallet = document.getElementById('disconnect');
 disconnectWallet.onclick = async () => {
 	currentAccount = document.getElementById('current-account')
 	currentAccount.innerHTML = "Disconnected"
+	alert("use metamask to disconnect from the site")
 }
 
 // staked balance raw
