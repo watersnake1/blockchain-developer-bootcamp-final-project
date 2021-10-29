@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Virtual Yield Frontend</title>
+	<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+
+<body>
+	<center>
+	<h1>Virtual Yield Frontend</h1>
+	<div id="metamask"></div>
+	<button id="connect">Connect Wallet</button>
+	<div id="current-account"></div>
+	<button id="disconnect">Disconnect Wallet</button>
+	<div id="staked-balance">Staked Balance Raw </div>
+	<div id="staked-balance-virtual">Staked Balance Virtual </div>
+	<div id="unstaked-balance">Unstaked Balance </div>
+	<div>
+		<input id="stake-tokens" type="number" placeholder="0.0"/>
+	</div>
+	<button id="stake">Stake</button>
+	<div>
+		<input id="unstake-tokens" type="number" placeholder="0.0"/>
+	</div>
+	<button id="unstake">Unstake</button>
+	<div>
+		<div id="global-staked-raw">Total Staked Tokens Raw </div>
+		<div id="global-staked-virtual">Total Staked Tokens Virtual </div>
+	</div>
+	</center>
+</body>
+<script src="dapp.js"></script>
+</html>
