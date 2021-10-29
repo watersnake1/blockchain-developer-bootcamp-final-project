@@ -1,8 +1,22 @@
-# blockchain-developer-bootcamp-final-project
-Consensys Developer Bootcamp Final Project
-## Badge - NFT managed email accounts
-### Overview
-At a high level, badge allows users to create logins using an email address, then generating an NFT based off the hash of the input email and password. Credentials for the user are stored in a smart contract and can be queried by a webapp to allow a user to login. This way, dApps can replicate the web2 login flow without integrating with google or storing user credentials, users don't have to worry about security regarding their email, and users can easily delegate login priviliges to others by transferring or fractionalizing the NFT. 
+# Consensys Final Project - Exploring Virtual Yield
 
-### Example Flow
-User navigates to the frontend, either intentionally or on redirect from another dapp. Then, the user enters an email and password to the frontend, which are hashed and stored. The contract generates an NFT and issues it to the user's wallet. When the user signs up for new accounts they must give spending permission to the login smart contract.
+## Overview
+
+### The Problem
+The gas costs associated with actions such as large-scale mathematical operations across a data structure pose a limitation to how the developer can affect the behavior of a token during the development process. Additionally, looping over the keys of a mapping, which can be done easily (and its cost is not frequently considered) in other languages is not easily possible in solidity. It is in fact optimal to avoid the use of loops wherever possible. This project demonstrates the use of a more efficient solution to implement global behavior in the context of an ERC20-style token by using exponents and integers as opposed to loops.
+
+### Virtual Yield
+This ERC20 token has a special property. When any user of the system undertakes a certain action with respect to the smart contract, in this case simple transfers and unstaking, the entire set of token holders accrue an award of new issuance tokens. The limitation is to achieve this system without the need for loops at any point, optimizing the gas comsumption for all users. To achieve this, I introduce the multiplier *a*, which allows for the actual balances of all users to be tracked *without needing to be calculated at every transaction*. Instead, all the information about *current* balances are contained within *a*, and the required calculation is only applied when necesary. 
+
+### Applying the formula
+**This concept was inspired by Jake Brukhman and the algorithm we developed to express a solution to this problem**
+**This concept was also partially inspired by the idea of reflector tokens**
+
+- Each user will have a *base balance* and a *virtual balance*. At certain events, the tokens expressed in the *virtual balance* will accrue to the *base balance*, at which point they become "real" and can be used for any activities within web3. 
+- Simple transfers will cause the multiplier a to be increased by 1%. Unstakes will do the same. Deposits to the staking lockup (where users can accrue more virtual tokens) will reduce the global multiplier by 0.05%. The contract shall track the total number of these events (transfers, unstakes and stakes) in `txCount`.
+- A user may elect to accrue their virtual tokens to their base balance (realizing gains) without unstaking. At the time of realization their base balance is credited by `(stakedBaseBalance * a^(txCount)) - stakedBaseBalance)` and `stakedBaseBalance` is reduced by the amount accrued in "real" tokens.
+- A user may also elect to withdraw their "real" tokens directly from the staking lockup, with the penalty of losing whatever percentage of their base balance their accrued virtual yield represents. If this exceeds 100% they must realize gains before unstaking. If this equals 0% then there is no penalty.
+- When checking the base balance no customized behavior is applied
+- When checking the *staked balance* the contract shall return `stakedBaseBalance* a^(txCount)
+- The staking lockup is represented by a mapping `(address => uint)` that is used in tandem with the ERC20 standard `balances` mapping
+
