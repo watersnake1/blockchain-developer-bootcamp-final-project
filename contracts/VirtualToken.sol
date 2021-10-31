@@ -24,8 +24,14 @@ contract VirtualToken is ERC20 {
 	// events
 	// needed events
 	//	StakeEvent
+
+	event StakeEvent(uint256 amt, address staker, uint newA);
 	//	UnstakeEvent
+	
+	event UnstakeEvent(uint256 amt, address unstaker, uint newA);
 	//	TransferEvent
+
+	event TransferEvent(uint256 newA);
 
 	// functions
 	function stakedBalanceOf(address act) public view returns (uint256) {
