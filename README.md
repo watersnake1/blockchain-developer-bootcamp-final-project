@@ -20,3 +20,18 @@ This ERC20 token has a special property. When any user of the system undertakes 
 - When checking the *staked balance* the contract shall return `stakedBaseBalance* a^(txCount)
 - The staking lockup is represented by a mapping `(address => uint)` that is used in tandem with the ERC20 standard `balances` mapping
 
+### Directory Structure
+The project is structured as a standard solidity smart contract project. There are 5 directories within this project. They are:
+
+* Build - contains build artefacts 
+* Contracts - contains the solidity smart contracts used
+* Frontend - contains the html and js files for the frontend ui
+* Migrations - contains scripts for deploying the contracts
+* Test - contains unit tests, written in javascript
+
+### Accessing this project
+The project frontend for testnet can be found at [github pages] and the smart contract is deployed on Ropsten at [address]
+
+### ETH Address
+My ETH address is 0xB4ff581298a6D68B386a9a983F3463fBE4Fc32aA
+
