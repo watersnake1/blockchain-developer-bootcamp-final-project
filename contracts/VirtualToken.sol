@@ -15,6 +15,7 @@ contract VirtualToken is ERC20 {
 	// mirroring the structure of ERC20 from OZ where the balance map is private
 	mapping (address => uint256) private _stakedBalances;
 	uint private a;
+	uint private baseA;
 	// these are the deltas that impact the multiplier a
 	uint stakingPenalty;
 	uint transferReward;
@@ -26,12 +27,13 @@ contract VirtualToken is ERC20 {
 
 	// using these modifiers prevents minting tokens that a user does not have (attack vector 2)
 	modifier sufficientUnstakedBalance(address _act, uint _amt) {
-		require(balanceOf(_act) > _amt, "Insufficient Unstaked Balance");
+		require(balanceOf(_act) >= _amt, "Insufficient Unstaked Balance");
 		_;
 	}
 
+	// this should do math to check the virtual balance not the raw balance
 	modifier sufficientStakedBalance(address _act, uint _amt) {
-		require(stakedBalanceOf(_act) > _amt, "Insufficient Staked Balance");
+		require(stakedBalanceOf(_act) >= _amt, "Insufficient Staked Balance");
 		_;
 	}
 
@@ -50,6 +52,8 @@ contract VirtualToken is ERC20 {
 		owner = msg.sender;
 		//a = 1.01;
 		a = 1010000000000000000;
+		baseA = 1010000000000000000;
+		//a = 1.01;
 		//stakingPenalty = 0.5;
 		stakingPenalty = 500000000000000000;
 		totalStaked = 0;
@@ -74,7 +78,8 @@ contract VirtualToken is ERC20 {
 	*/
 	function stakedVirtualBalanceOf(address act) public view returns (uint256) {
 		//return _stakedBalances[act] * a;
-		return _stakedBalances[act].mul(a);
+		uint aTruncated = a.div(10**18);
+		return _stakedBalances[act].mul(aTruncated);
 	}
 
 	/**
@@ -92,7 +97,18 @@ contract VirtualToken is ERC20 {
 				return false;
 			}
 		}
-		a = a**eventCount;
+		// need to round down to normal decimals, do the exponential, then round back up
+		//a = ((a.div(1**18))**eventCount);
+		//a = a**eventCount;
+		// we are going to assume that a is represented as an 18 digit decimal
+		// to iterate we do the function y = 1.01 + 0.0011x + 0.00011x^2 + 0.0000001x^3
+		//a = 101000000000000000 + 11000000000000000*(eventCount**2) + 110000000000*(eventCount**3);
+		//a = baseA.add(11000000000000000.mul(eventCount**2)).add(110000000000.mul(eventCount**3));
+		uint t1 = 11000000000000000;
+		uint t2 = 110000000000;
+		t1 = t1.mul(eventCount**2);
+		t2 = t2.mul(eventCount**3);
+		a = baseA.add(t1).add(t2);
 		return true;
 	}
 
@@ -157,6 +173,16 @@ contract VirtualToken is ERC20 {
 	function getMultiplier() public view returns (uint) {
 		return eventCount;
 	}
+
+	/**
+	* Mint tokens for testing purposes
+        */ 
+        function getTokens() public returns (bool) {
+		_mint(msg.sender, 100);
+		modifyMultiplier(true);
+		return true;
+	}
+
 	// to consider:
 	// add ownability, and allow for the changing of parameters by the admin
 
