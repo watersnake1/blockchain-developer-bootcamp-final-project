@@ -14,6 +14,7 @@
 	<h1>Virtual Yield Frontend</h1>
 	<br>
 	<br>
+	<p>This dapp uses a function that approximates 1.01^n to add 1% to each user's staked balance for each event that occurs by users who have unstaked balance. Tokens can be minted using the button at the bottom for testing purposes. </p>
 	<div id="metamask"></div>
 	<button id="connect">Connect Wallet</button>
 	<div id="current-account"></div>
@@ -34,10 +35,12 @@
 	</div>
 	<button id="unstake">Unstake</button>
 	<div>
-		<div id="global-staked-raw">Total Staked Tokens Raw </div>
-		<div id="global-staked-virtual">Total Staked Tokens Virtual </div>
+		<div id="current-multiplier">Current Multiplier Level</div>
+	</div>
+	<div>
+		<button id="get-test-tokens">Get Tokens (Testing Only)</button>
 	</div>
 	</center>
 </body>
-<script src="dapp.js"></script>
+<script src="./dapp.js"></script>
 </html>
