@@ -13,7 +13,7 @@ This ERC20 token has a special property. When any user of the system undertakes 
 **This concept was also partially inspired by the idea of reflector tokens**
 
 - Each user will have a *base balance* and a *virtual balance*. At certain events, the tokens expressed in the *virtual balance* will accrue to the *base balance*, at which point they become "real" and can be used for any activities within web3. 
-- Simple transfers will cause the multiplier a to be increased by 1%. Unstakes will do the same. Deposits to the staking lockup (where users can accrue more virtual tokens) will reduce the global multiplier by 0.05% (to be implemented in future versions). The contract shall track the total number of these events (transfers, unstakes and stakes) in `eventCount`.
+- Simple mints will cause the multiplier a to be increased by 1%. Unstakes will do the same. Deposits to the staking lockup (where users can accrue more virtual tokens) will reduce the global multiplier by 0.05% (to be implemented in future versions). The contract shall track the total number of these events in `eventCount`.
 - A user may elect to accrue their virtual tokens to their base balance (realizing gains) without unstaking. At the time of realization their base balance is credited by `(stakedBaseBalance * a^(eventCount)) - stakedBaseBalance)` and `stakedBaseBalance` is reduced by the amount accrued in "real" tokens.
 - A user may also elect to withdraw their "real" tokens directly from the staking lockup, with the penalty of losing whatever percentage of their base balance their accrued virtual yield represents. If this exceeds 100% they must realize gains before unstaking. If this equals 0% then there is no penalty.
 - When checking the base balance no customized behavior is applied
@@ -30,6 +30,14 @@ The project is structured as a standard solidity smart contract project. There a
 * Migrations - contains scripts for deploying the contracts
 * Test - contains unit tests, written in javascript
 
+### Design Patterns Used
+* Optimizing gas - using a multiplier to track the accrued balances reduces the number of writes to storage
+* Inter-contract execution - the contract calls the methods _burn and _mint from ERC20.sol
+
+### SWC Vulnerabilities
+* 131 - no unused variables
+* 115 - no use of tx.origin
+
 ### Future Work
 I have learned through the course of this project that decimal numbers are poorly handled within solidity. Future work to improve this system, and preclude the need for approximating functions such as `f(x)=1.01^x` with crudely guessed polynomials, would be to implement a decimal exponentiation library in solidity (similar to safeMath) that is able to represent the decimal numbers as 18-digit uints, carry out the calculation precisely, and *not* overflow the uint buffer. 
 
@@ -38,4 +46,7 @@ The project frontend for testnet can be found at `https://watersnake1.github.io/
 
 ### ETH Address
 My ETH address is 0xB4ff581298a6D68B386a9a983F3463fBE4Fc32aA
+
+### Dependencies
+* This project requires truffle, truffle-hdwallet-provider, node, npm, and an infura endpoint (to migrate)
 
