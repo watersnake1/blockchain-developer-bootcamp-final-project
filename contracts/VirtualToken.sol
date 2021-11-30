@@ -119,7 +119,7 @@ contract VirtualToken is ERC20 {
 		_stakedBalances[msg.sender] = _stakedBalances[msg.sender].sub(_amt);
 		modifyMultiplier(true);
 		totalStaked = totalStaked.sub(_amt);
-		_mint(msg.sender, _amt.mul(getMultiplier()));
+		_mint(msg.sender, _amt.mul(getMultiplier().div(10**18)));
 		return true;	
 	}
 

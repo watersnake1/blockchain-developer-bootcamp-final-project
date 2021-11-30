@@ -50,3 +50,6 @@ My ETH address is 0xB4ff581298a6D68B386a9a983F3463fBE4Fc32aA
 ### Dependencies
 * This project requires truffle, truffle-hdwallet-provider, node, npm, and an infura endpoint (to migrate)
 * setup for migration - please add the mnemonic to the wallet to be used for deploying to '.secret' at the project root, and the the infura url to the .infura file, both of which should be created at the project root
+
+### Testing
+* To run tests, execute `truffle test` at the command line. To migrate to a local network, set the port of the network to 8545
