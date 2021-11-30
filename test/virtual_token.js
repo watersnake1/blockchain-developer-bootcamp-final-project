@@ -6,6 +6,7 @@ const virtualToken = artifacts.require("virtualToken");
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
 contract("virtualToken", function (accounts) {
+  //check to make sure the contract is live
   it("should assert true", async function () {
     await virtualToken.deployed();
     return assert.isTrue(true);
@@ -16,11 +17,13 @@ contract("virtualToken", function (accounts) {
     const initialMultiplier = await vtInstance.getMultiplier.call();
     return assert.equal(initialMultiplier, 0);
   });
+  //check to make sure the owner is in control of the contract
   it("should be owned be the deployer", async () => {
     const vtInstance = await virtualToken.deployed();
     const owner = await vtInstance.getOwner.call();
     return assert.equal(owner, accounts[0]);
   });
+  //check to make sure the balance of the owner was configured properly
   it("should have an initial unstaked balance at msg.sender", async () => {
     const vtInstance = await virtualToken.deployed();
     //const initialBalanceOfOwner = 100000000000000000000;
@@ -28,6 +31,7 @@ contract("virtualToken", function (accounts) {
     const actualInitialBalance = await vtInstance.balanceOf(accounts[0]);
     return assert.equal(initialBalanceOfOwner, actualInitialBalance);
   });
+  //check to see if staking works
   it("should stake succesfully", async () => {
     const vtInstance = await virtualToken.deployed();
 		const amountToStake = 10;
@@ -50,6 +54,7 @@ contract("virtualToken", function (accounts) {
 		assert.equal(ec, 1, `multiplier did not increase`);
 		return;
 	});
+  //check to see if unstaking works
   it("should unstake succesfully", async () => {
     const vtInstance = await virtualToken.deployed();
 		const amountToUnstake = 1;
