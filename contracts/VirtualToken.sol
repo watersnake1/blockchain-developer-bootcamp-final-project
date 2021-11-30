@@ -17,8 +17,6 @@ contract VirtualToken is ERC20 {
 	uint private a;
 	uint private baseA;
 	// these are the deltas that impact the multiplier a
-	uint stakingPenalty;
-	uint transferReward;
 	uint totalStaked;
 	uint eventCount;
 	
@@ -39,7 +37,8 @@ contract VirtualToken is ERC20 {
 
 	event StakeEvent(uint256 amt, address staker, uint newA);
 	//	UnstakeEvent
-	
+
+	//TODO: add frontend integration for tracking events and updating the page	
 	event UnstakeEvent(uint256 amt, address unstaker, uint newA);
 
 	event NewMultiplierEvent(uint256 newA);
@@ -48,44 +47,35 @@ contract VirtualToken is ERC20 {
 	constructor(string memory name_,
 		   string memory symbol_)
 	ERC20(name_, symbol_) {
-		//require(owner_ != address(0), "ZERO_OWNER");
 		owner = msg.sender;
-		//a = 1.01;
 		a = 1010000000000000000;
 		baseA = 1010000000000000000;
-		//a = 1.01;
-		//stakingPenalty = 0.5;
-		stakingPenalty = 500000000000000000;
 		totalStaked = 0;
-		//transferReward = 0.001;
-		transferReward = 1000000000000000; 
 		eventCount = 0;
-		//proxyRegistryAddress = proxy_;
-		//uint256 totalSupply = 100000000000000000000;
 		uint256 totalSupply = 100;
 		_mint(msg.sender,totalSupply); 
 	}
 
-	/**
-	* Returns the balance of the user that is in staking mapping
-	*/
+        //@notice Returns the balance of the user that is in staking mapping
+	//@param account address
+	//@return staked balance raw
 	function stakedBalanceOf(address act) public view returns (uint256) {
 		return _stakedBalances[act];
 	}
 
-	/**
-	* Returns the virtual staked balance that is in the staking mapping, or above x a
-	*/
+        //@notice Returns the virtual staked balance that is in the staking mapping, or above x a
+	//@param account address
+	//@return virtual staked balance
 	function stakedVirtualBalanceOf(address act) public view returns (uint256) {
-		//return _stakedBalances[act] * a;
 		uint aTruncated = a.div(10**18);
 		return _stakedBalances[act].mul(aTruncated);
 	}
 
-	/**
-	* Makes a change to the global multiplier
-        * If _increase == true, then it is a positive change, if false then it is a decrease
-	*/
+	
+	//@notice Makes a change to the global multiplier
+        //@dev If _increase == true, then it is a positive change, if false then it is a decrease
+	//@param increase or decrease, expressed as bool
+	//@return true
 	function modifyMultiplier(bool _increase) private returns (bool) {
 		// code to change the multiplier value
 		if (_increase) {
@@ -97,13 +87,8 @@ contract VirtualToken is ERC20 {
 				return false;
 			}
 		}
-		// need to round down to normal decimals, do the exponential, then round back up
-		//a = ((a.div(1**18))**eventCount);
-		//a = a**eventCount;
 		// we are going to assume that a is represented as an 18 digit decimal
 		// to iterate we do the function y = 1.01 + 0.0011x + 0.00011x^2 + 0.0000001x^3
-		//a = 101000000000000000 + 11000000000000000*(eventCount**2) + 110000000000*(eventCount**3);
-		//a = baseA.add(11000000000000000.mul(eventCount**2)).add(110000000000.mul(eventCount**3));
 		uint t1 = 11000000000000000;
 		uint t2 = 110000000000;
 		t1 = t1.mul(eventCount**2);
@@ -112,28 +97,24 @@ contract VirtualToken is ERC20 {
 		return true;
 	}
 
-	/**
-	* Move tokens from the _balances mapping to the staked balance mapping
-	*/
+	//@notice Move tokens from the _balances mapping to the staked balance mapping
+	//@param amount to stake
+	//@return true
 	function stake(uint _amt) public sufficientUnstakedBalance(msg.sender, _amt) returns (bool) {
-		//_balances[msg.sender] -= _amt;
-		//_balances[msg.sender].sub(_amt);
 		_burn(msg.sender, _amt);
-		//_stakedBalances[msg.sender] += _amt;
 		_stakedBalances[msg.sender] = _stakedBalances[msg.sender].add(_amt);
 		// decrease the multiplier
 		modifyMultiplier(false);
-		//totalStaked += _amt;
 		totalStaked = totalStaked.add(_amt);
 		// increase the event count to increase a
 		emit StakeEvent(_amt, msg.sender, getMultiplier());
 		return true;
 	}
 
-	/**
-	* Move tokens from the staked balance mapping to the regular _balances mapping
-        * Accrue the virtual yield gains to the user's wallet
-	*/
+	//@notice Move tokens from the staked balance mapping to the regular _balances mapping
+        //@dev Accrue the virtual yield gains to the user's wallet
+	//@param amount to unstake
+	//@return true
 	function unstake(uint _amt) public sufficientStakedBalance(msg.sender, _amt) returns (bool) {
 		_stakedBalances[msg.sender] = _stakedBalances[msg.sender].sub(_amt);
 		modifyMultiplier(true);
@@ -142,9 +123,9 @@ contract VirtualToken is ERC20 {
 		return true;	
 	}
 
-	/**
-	* Need to override transfer to add the custom multiplier increase behavior
-	*/
+	//@notice Need to override transfer to add the custom multiplier increase behavior
+	//@param address of the recipient and amount to transfer
+	//@return true
 	function transfer(address recipient, uint256 amount) public override returns (bool) {
 		//increase the multiplier
 		modifyMultiplier(true);
@@ -153,30 +134,26 @@ contract VirtualToken is ERC20 {
 		return true;
 	}
 
-	/**
-	* Get the global staked balance within the protocol
-	*/
+	//@notice Get the global staked balance within the protocol
+	//@return the total amount staked
 	function getTotalStakedBalance() public view returns (uint) {
 		return totalStaked;
 	}
 
-	/**
-	* Get the total staked balance within the protocol in virtual terms
-	*/
+	//@notice Get the total staked balance within the protocol in virtual terms
+	//@return a user's virtual balance
 	function getTotalVirtualStakeBalance() public view returns (uint) {
 		return totalStaked.mul(a);
 	}	
 
-	/**
-	* Get the multiplier a
-	*/
+	//@notice Get the multiplier a
+	//@return the current number of interactions this smart contract has had, for calculating a
 	function getMultiplier() public view returns (uint) {
 		return eventCount;
 	}
 
-	/**
-	* Mint tokens for testing purposes
-        */ 
+	//@notice Mint tokens for testing purposes
+	//@return true if successful
         function getTokens() public returns (bool) {
 		_mint(msg.sender, 100);
 		modifyMultiplier(true);
@@ -186,9 +163,8 @@ contract VirtualToken is ERC20 {
 	// to consider:
 	// add ownability, and allow for the changing of parameters by the admin
 
-	/**
-	* Get the current owner of the contract
-        */
+	//@notice Get the current owner of the contract
+	//@return the deployer of the contract
         function getOwner() public view returns (address) {
 		return owner;
 	}

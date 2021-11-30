@@ -571,13 +571,14 @@ connectWallet.onclick = async () => {
 	var unstakedInitial = await vtContract.methods.balanceOf(accounts[0]).call({from:accounts[0]});
 	var stakedInitial = await vtContract.methods.stakedBalanceOf(accounts[0]).call({from:accounts[0]});
 	var stakedInitialVirtual = await vtContract.methods.stakedVirtualBalanceOf(accounts[0]).call({from:accounts[0]});
-	stakedBalance.innerHTML = 'Staked Balance Raw' + stakedInitial; 
-	stakedBalanceVirtual.innerHTML = 'Staked Balance Virtual' + stakedInitialVirtual; 
-	unstakedBalance.innerHTML = 'Unstaked Balance' + unstakedInitial;
+	stakedBalance.innerHTML = 'Staked Balance Raw ' + stakedInitial; 
+	stakedBalanceVirtual.innerHTML = 'Staked Balance Virtual ' + stakedInitialVirtual; 
+	unstakedBalance.innerHTML = 'Unstaked Balance ' + unstakedInitial;
 	//update the multiplier variable
 	cm = await vtContract.methods.getMultiplier().call();
 	currentMultiplier.innerHTML = "Current Multiplier Level " + cm;
 	console.log(initiala);
+	console.log(cm)
 }
 // disconnect wallet
 const disconnectWallet = document.getElementById('disconnect');
