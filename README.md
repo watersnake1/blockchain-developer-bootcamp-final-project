@@ -53,3 +53,6 @@ My ETH address is 0xB4ff581298a6D68B386a9a983F3463fBE4Fc32aA
 
 ### Testing
 * To run tests, execute `truffle test` at the command line. To migrate to a local network, set the port of the network to 8545
+
+### Screencast
+* You can find a .mov file in this repo
