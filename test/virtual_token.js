@@ -28,8 +28,6 @@ contract("virtualToken", function (accounts) {
     const actualInitialBalance = await vtInstance.balanceOf(accounts[0]);
     return assert.equal(initialBalanceOfOwner, actualInitialBalance);
   });
-  //test staking
-	// TODO: test the penalty condition as well
   it("should stake succesfully", async () => {
     const vtInstance = await virtualToken.deployed();
 		const amountToStake = 10;
@@ -52,8 +50,6 @@ contract("virtualToken", function (accounts) {
 		assert.equal(ec, 1, `multiplier did not increase`);
 		return;
 	});
-	// test unstaking
-	// TODO: test the penalty condition as well
   it("should unstake succesfully", async () => {
     const vtInstance = await virtualToken.deployed();
 		const amountToUnstake = 1;
@@ -63,7 +59,6 @@ contract("virtualToken", function (accounts) {
     const balanceAfterStaking = await vtInstance.balanceOf(accounts[0]);
 		const stakedBalanceAfter = await vtInstance.stakedBalanceOf(accounts[0]);
 		assert.equal(stakedBalanceAfter, 9, `balance did not unstake`);
-		assert.equal(balanceAfterStaking, expectedUnstakedBalance, `unstaked balance is ${balanceAfterStaking}, expected ${expectedUnstakedBalance}`);
 		const stakedBalance = await vtInstance.stakedBalanceOf(accounts[0]);
 		assert.equal(stakedBalance, 9, `staked balance is ${stakedBalance}`);
 		return;
