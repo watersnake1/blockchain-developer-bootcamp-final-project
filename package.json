@@ -1,0 +1,27 @@
+{
+  "name": "blockchain-developer-bootcamp-final-project",
+  "version": "1.0.0",
+  "description": "virtual yield",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watersnake1/blockchain-developer-bootcamp-final-project.git"
+  },
+  "author": "christian murray",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/watersnake1/blockchain-developer-bootcamp-final-project/issues"
+  },
+  "homepage": "https://github.com/watersnake1/blockchain-developer-bootcamp-final-project#readme",
+  "dependencies": {
+    "@openzeppelin/cli": "^2.8.2",
+    "@openzeppelin/contracts": "^4.3.2",
+    "@truffle/hdwallet-provider": "^1.7.0",
+    "dotenv": "^10.0.0",
+    "http-server": "^14.0.0",
+    "truffle-hdwallet-provider": "^1.0.17"
+  }
+}
